@@ -11,12 +11,18 @@ app
   .then(() => {
     const server = express();
 
-    server.get("/a", (req, res) => {
-      return app.render(req, res, "/a", req.query);
+    server.get("/cart", (req, res) => {
+      return app.render(req, res, "/cart", req.query);
     });
 
-    server.get("/b", (req, res) => {
-      return app.render(req, res, "/b", req.query);
+    server.get("/checkout", (req, res) => {
+      return app.render(req, res, "/checkout", req.query);
+    });
+
+    server.get("/p/:id", (req, res) => {
+      const actualPage = "/product";
+      const queryParams = { id: req.params.id };
+      app.render(req, res, actualPage, queryParams);
     });
 
     server.get("*", (req, res) => {
