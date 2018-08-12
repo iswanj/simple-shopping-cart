@@ -1,0 +1,15 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Product One",
+      "price": 45.55,
+      "key": "product-one"
+    },
+    { "id": 2, "name": "Product Two", "price": 45.55, "key": "product-two" }
+  ],
+  "cart": [],
+  "profile": {
+    "name": "typicode"
+  }
+}

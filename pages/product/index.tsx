@@ -1,14 +1,21 @@
 import { withRouter } from "next/router";
 import React from "react";
 
+import Header from "../../components/layout/Header";
+
 interface IProductPage {
   router: {
     query: {
-      id: number;
+      key: string;
     };
   };
 }
 
 export default withRouter((props: IProductPage) => {
-  return <div>Product id = {props.router.query.id}</div>;
+  return (
+    <div>
+      <Header />
+      <p>Product id = {props.router.query.key}</p>
+    </div>
+  );
 });

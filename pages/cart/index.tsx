@@ -1,3 +1,10 @@
 import React from "react";
 
-export default () => <div>Cart</div>;
+import Header from "../../components/layout/Header";
+
+export default () => (
+  <div>
+    <Header />
+    <p>Cart</p>
+  </div>
+);

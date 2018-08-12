@@ -1,3 +1,8 @@
 import React from "react";
-
-export default () => <div>checkout</div>;
+import Header from "../../components/layout/Header";
+export default () => (
+  <div>
+    <Header />
+    <p>checkout</p>
+  </div>
+);
