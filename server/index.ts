@@ -19,9 +19,9 @@ app
       return app.render(req, res, "/checkout", req.query);
     });
 
-    server.get("/p/:id", (req, res) => {
+    server.get("/p/:key", (req, res) => {
       const actualPage = "/product";
-      const queryParams = { id: req.params.id };
+      const queryParams = { key: req.params.key };
       app.render(req, res, actualPage, queryParams);
     });
 
