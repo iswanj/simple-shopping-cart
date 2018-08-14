@@ -14,7 +14,18 @@ interface IProductPage {
   };
 }
 
-class Product extends React.Component<IProductPage> {
+interface IProductState {
+  product: {
+    name: string;
+    price: number;
+  };
+}
+
+class Product extends React.Component<IProductPage, IProductState> {
+  public static defaultProps = {
+    product: {}
+  };
+
   public static async getInitialProps(context): Promise<any> {
     try {
       const data = await getProductById(context.query.key);
@@ -29,8 +40,16 @@ class Product extends React.Component<IProductPage> {
     }
   }
 
+  constructor(props) {
+    super(props);
+    const { product } = props;
+    this.state = {
+      product
+    };
+  }
+
   public render() {
-    const { product } = this.props;
+    const { product } = this.state;
     return (
       <ProductContext.Provider
         value={{
