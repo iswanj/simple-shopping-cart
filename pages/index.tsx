@@ -1,6 +1,10 @@
 import React from "react";
 import Link from "next/link";
 
+import { Map } from "immutable";
+
+import fetch from "isomorphic-unfetch";
+
 import Header from "../components/layout/Header";
 import {
   Wrapper,
@@ -12,22 +16,19 @@ import {
   Name
 } from "./styles";
 
-import { getProducts } from "../api/product";
+import {
+  ProductProvider,
+  ProductConnect
+} from "../controller/ProductController";
 
 interface IIndexProps {
   products: [{}];
+  data: [{}];
+  getProducts(Array): void;
 }
-export default class Index extends React.Component<IIndexProps> {
-  public static async getInitialProps(): Promise<any> {
-    const data = await getProducts();
 
-    return {
-      products: data
-    };
-    // ...
-  }
+class Container extends React.Component<any> {
   public render() {
-    const { products } = this.props;
     return (
       <Wrapper>
         <Header />
@@ -39,13 +40,14 @@ export default class Index extends React.Component<IIndexProps> {
           </CartLink>
         </TopBar>
         <List>
-          {products.map(this.renderItems)}
+          {this.props.state.products.first() &&
+            this.props.state.products.first().map(this.renderItems)}
           {/* <ProductContext.Consumer>
-              {(data: { products: [{}] }) => {
-                console.log("data****", data);
-                return data.;
-              }}
-            </ProductContext.Consumer> */}
+                {(data: { products: [{}] }) => {
+                  console.log("data****", data);
+                  return data.;
+                }}
+              </ProductContext.Consumer> */}
         </List>
       </Wrapper>
     );
@@ -71,6 +73,33 @@ export default class Index extends React.Component<IIndexProps> {
     );
   }
 }
+
+const IndexContainer = ProductConnect(Container);
+class Index extends React.Component<IIndexProps> {
+  public static defaultProps = {
+    products: []
+  };
+
+  public static async getInitialProps(): Promise<any> {
+    const res = await fetch("http://localhost:3001/products");
+    const data = await res.json();
+    return {
+      data
+    };
+  }
+
+  constructor(props: IIndexProps) {
+    super(props);
+    props.getProducts(props.data);
+  }
+
+  public render() {
+    return <IndexContainer />;
+  }
+}
+
+// export default ProductProvider(Index);
+export default ProductProvider(Index);
 
 // <Link as={`/p/${item.key}`} href={`/product?key=${item.key}`}>
 //  <LinkButton>{item.name}</LinkButton>

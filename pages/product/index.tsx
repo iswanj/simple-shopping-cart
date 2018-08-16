@@ -53,7 +53,7 @@ class Product extends React.Component<IProductPage, IProductState> {
     return (
       <ProductContext.Provider
         value={{
-          ...this.state
+          state: this.state
         }}
       >
         <div>
