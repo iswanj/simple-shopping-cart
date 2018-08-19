@@ -1,36 +1,54 @@
 import { withRouter, SingletonRouter } from "next/router";
 import React from "react";
-import { getProductById } from "../../api/product";
 
 import Header from "../../components/layout/Header";
 
-export const ProductContext = React.createContext({});
+import {
+  ProductProvider,
+  ProductConnect
+} from "../../controller/ProductController";
+import { Map } from "immutable";
+
+import { Wrapper, H1, Price, CartButton } from "./styles";
 
 interface IProductPage {
   router: SingletonRouter;
-  product: {
-    name: string;
-    price: number;
+  productsById: Map<string, { name: string; price: number }>;
+  data: {
+    key: string;
   };
 }
 
-interface IProductState {
-  product: {
-    name: string;
-    price: number;
-  };
+class Container extends React.Component<IProductPage> {
+  public render() {
+    const { productsById, data } = this.props;
+    const product = productsById.get(data.key);
+    if (!product) {
+      return <div />;
+    }
+    return (
+      <Wrapper>
+        <Header />
+        <H1>{product.name}</H1>
+        <Price>Product price = {product.price}</Price>
+        <CartButton>Add to cart</CartButton>
+      </Wrapper>
+    );
+  }
 }
 
-class Product extends React.Component<IProductPage, IProductState> {
-  public static defaultProps = {
-    product: {}
-  };
+const IndexContainer = ProductConnect(Container);
 
+class Product extends React.Component<any> {
   public static async getInitialProps(context): Promise<any> {
     try {
-      const data = await getProductById(context.query.key);
+      const res = await fetch(
+        `http://localhost:3001/products/${context.query.key}`
+      );
+      const data = await res.json();
       return {
-        product: data
+        data: data[0],
+        query: context.query
       };
     } catch (error) {
       console.log(error);
@@ -42,28 +60,12 @@ class Product extends React.Component<IProductPage, IProductState> {
 
   constructor(props) {
     super(props);
-    const { product } = props;
-    this.state = {
-      product
-    };
+    props.getProductById(props.data);
   }
 
   public render() {
-    const { product } = this.state;
-    return (
-      <ProductContext.Provider
-        value={{
-          state: this.state
-        }}
-      >
-        <div>
-          <Header />
-          <p>Product name = {product.name}</p>
-          <p>Product price = {product.price}</p>
-        </div>
-      </ProductContext.Provider>
-    );
+    return <IndexContainer {...this.props} />;
   }
 }
 
-export default withRouter(Product);
+export default ProductProvider(withRouter(Product));

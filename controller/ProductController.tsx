@@ -1,45 +1,50 @@
 import React, { Component } from "react";
-import { List } from "immutable";
+import { Map } from "immutable";
 import hoistNonReactStatic from "hoist-non-react-statics";
 
-interface IState {
-  products: List<{
-    id: string;
-  }>;
-}
+import { normalizeByKey, getVisibleKeys } from "../util/core";
 
-interface IProps {
-  getInitialProps(): void;
+interface IState {
+  productsById: Map<{}, {}>;
+  productKeys: string[];
 }
 
 const ProductContext = React.createContext({});
 
 export const ProductProvider = Page => {
-  class ProductController extends Component<IProps, IState> {
-    public state = { products: List() };
+  class ProductController extends Component<{}, IState> {
+    public state = { productsById: Map({}), productKeys: [] };
     public render() {
       return (
-        <ProductContext.Provider value={{ state: this.state }}>
-          <Page {...this.props} getProducts={this.getProducts} />
+        <ProductContext.Provider value={{ ...this.state }}>
+          <Page
+            {...this.props}
+            getProducts={this.getProducts}
+            getProductById={this.getProductById}
+          />
         </ProductContext.Provider>
       );
     }
 
     private getProducts = async (data: [{}]) => {
-      const { products } = this.state;
       this.setState({
-        products: products.push(data)
+        productsById: Map(normalizeByKey(data, "key")),
+        productKeys: getVisibleKeys(data, "key")
       });
     };
 
-    // private getProductById = async (key: string) => {
-    //   const res = await fetch(`http://localhost:3001/products/${key}`);
-    //   const data = await res.json();
-
-    //   this.setState({
-    //     currentProduct: data[0]
-    //   });
-    // };
+    private getProductById = async (data: { key: string }) => {
+      const { productsById } = this.state;
+      this.setState({
+        productsById: productsById.merge(
+          productsById,
+          Map({
+            [data.key]: { ...data }
+          })
+        ),
+        productKeys: [data.key]
+      });
+    };
   }
 
   hoistNonReactStatic(ProductController, Page);

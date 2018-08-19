@@ -20,12 +20,14 @@ export const ListItem = styled.div`
   display: flex;
   padding: 20px 15px;
   flex: 1;
-  background-color: #ddd;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
   margin-bottom: 3px;
   color: #333;
   cursor: pointer;
   flex-direction: row;
   justify-content: space-between;
+  border-radius: 4px;
 `;
 
 export const TopBar = styled.section`
@@ -38,8 +40,8 @@ export const TopBar = styled.section`
 
 export const CartLink = styled.div`
   width: 120px;
-  border: 1px solid #ccc;
-  background-color: #ddd;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
   border-radius: 4px;
   padding: 0.7em;
 `;

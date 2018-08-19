@@ -1,11 +1,10 @@
 import React from "react";
 import Link from "next/link";
 
-import { Map } from "immutable";
-
 import fetch from "isomorphic-unfetch";
 
 import Header from "../components/layout/Header";
+import { parseDataList } from "../util/core";
 import {
   Wrapper,
   CartLink,
@@ -29,6 +28,8 @@ interface IIndexProps {
 
 class Container extends React.Component<any> {
   public render() {
+    const { productsById, productKeys } = this.props;
+    const productList = parseDataList(productsById, productKeys);
     return (
       <Wrapper>
         <Header />
@@ -39,16 +40,7 @@ class Container extends React.Component<any> {
             </Link>
           </CartLink>
         </TopBar>
-        <List>
-          {this.props.state.products.first() &&
-            this.props.state.products.first().map(this.renderItems)}
-          {/* <ProductContext.Consumer>
-                {(data: { products: [{}] }) => {
-                  console.log("data****", data);
-                  return data.;
-                }}
-              </ProductContext.Consumer> */}
-        </List>
+        <List>{productList.map(this.renderItems)}</List>
       </Wrapper>
     );
   }
@@ -81,11 +73,18 @@ class Index extends React.Component<IIndexProps> {
   };
 
   public static async getInitialProps(): Promise<any> {
-    const res = await fetch("http://localhost:3001/products");
-    const data = await res.json();
-    return {
-      data
-    };
+    try {
+      const res = await fetch("http://localhost:3001/products");
+      const data = await res.json();
+      return {
+        data
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        error
+      };
+    }
   }
 
   constructor(props: IIndexProps) {
