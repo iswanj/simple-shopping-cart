@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Map } from "immutable";
 import hoistNonReactStatic from "hoist-non-react-statics";
+import { ContextConnect } from "./ContextConnect";
 
 import { normalizeByKey, getVisibleKeys } from "../util/core";
 
@@ -12,7 +13,7 @@ interface IState {
 const ProductContext = React.createContext({});
 
 export const ProductProvider = Page => {
-  class ProductController extends Component<{}, IState> {
+  class Provider extends Component<{}, IState> {
     public state = { productsById: Map({}), productKeys: [] };
     public render() {
       return (
@@ -26,14 +27,14 @@ export const ProductProvider = Page => {
       );
     }
 
-    private getProducts = async (data: [{}]) => {
+    private getProducts = (data: [{}]) => {
       this.setState({
         productsById: Map(normalizeByKey(data, "key")),
         productKeys: getVisibleKeys(data, "key")
       });
     };
 
-    private getProductById = async (data: { key: string }) => {
+    private getProductById = (data: { key: string }) => {
       const { productsById } = this.state;
       this.setState({
         productsById: productsById.merge(
@@ -47,23 +48,9 @@ export const ProductProvider = Page => {
     };
   }
 
-  hoistNonReactStatic(ProductController, Page);
+  hoistNonReactStatic(Provider, Page);
 
-  return ProductController;
+  return Provider;
 };
 
-export const ProductConnect = Page => {
-  class ConnectedComponent extends Component {
-    public render() {
-      return (
-        <ProductContext.Consumer>
-          {state => {
-            return <Page {...this.props} {...state} />;
-          }}
-        </ProductContext.Consumer>
-      );
-    }
-  }
-
-  return ConnectedComponent;
-};
+export const ProductConnect = Page => ContextConnect(Page, ProductContext);

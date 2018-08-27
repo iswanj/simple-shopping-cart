@@ -6,9 +6,27 @@
       "price": 45.55,
       "key": "product-one"
     },
-    { "id": 2, "name": "Product Two", "price": 45.55, "key": "product-two" }
+    {
+      "id": 2,
+      "name": "Product Two",
+      "price": 45.55,
+      "key": "product-two"
+    }
   ],
-  "cart": [],
+  "cart": [
+    {
+      "sessionId": "123456",
+      "productId": 1,
+      "quantity": 1,
+      "id": 1
+    },
+    {
+      "sessionId": "123456",
+      "productId": 2,
+      "quantity": 1,
+      "id": 2
+    }
+  ],
   "profile": {
     "name": "typicode"
   }
